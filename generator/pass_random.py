@@ -3,6 +3,7 @@ import time
 
 
 def password_generator():
+    global user_password_length
     while True:
         try:
             # lists - ASCII
@@ -39,31 +40,33 @@ def password_generator():
                     print("Длина пароля должна быть положительным числом")
                     continue
 
-
             value_list = []
-            if user_password_digits == 'y':
-                for el in password_digit:
-                    value_list.append(el)
-            if user_small_letters == 'y':
-                for el in password_alpha_lower:
-                    value_list.append(el)
-            if user_capital_letters == 'y':
-                for el in password_alpha_upper:
-                    value_list.append(el)
-            if user_special_characters == 'y':
-                for el in password_special_characters:
-                    value_list.append(el)
+            value_list.extend(password_digit) if user_password_digits == 'y' else None
+            value_list.extend(password_alpha_lower) if user_small_letters == 'y' else None
+            value_list.extend(password_alpha_upper) if user_capital_letters == 'y' else None
+            value_list.extend(password_special_characters) if user_special_characters == 'y' else None
 
             random_elements = random.choices(value_list, k=user_password_length)
-            result = ''.join(random_elements)
-            return result
+            result_pass = ''.join(random_elements)
+            return result_pass
 
         except ValueError as e:
             print(f"Ошибка: {e}\nУкажите корректные значения.\n")
             continue
 
 
+def password_complexity():
+    if len(result) <= 8:
+        return f'Сложность пароля - Низкая'
+    if 9 <= len(result) <= 14:
+        return f'Сложность пароля - Средняя'
+    if len(result) > 14:
+        return f'Сложность пароля - Высокая'
+
+
 if __name__ == '__main__':
-    print(f'Ваш пароль - {password_generator()}')
-
-
+    result = password_generator()
+    print(f'Ваш пароль - {result}')
+    print(password_complexity())
+    with open('passwords.txt', 'a') as file:
+        file.write(result + '\n')
